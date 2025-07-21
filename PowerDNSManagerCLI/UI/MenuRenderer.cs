@@ -1,53 +1,52 @@
-﻿using PowerDNSManagerCLI.Models;
-using PowerDNSManagerCLI.Client;
-using Spectre.Console;
+﻿using Spectre.Console;
+using PowerDNSManagerCLI.Models;
+using PowerDNSManagerCLI.UI;
 
-namespace PowerDNSManagerCLI.Render;
+namespace PowerDNSManagerCLI.UI;
 
 public static class MenuRenderer
 {
     public static void Render(ServerInfo[] servers)
     {
-        var server = servers.First(); // пока работаем с первым
         while (true)
         {
-            var choice = AnsiConsole.Prompt(
+            var selected = AnsiConsole.Prompt(
                 new SelectionPrompt<string>()
-                    .Title("[green]Выберите действие:[/]")
-                    .AddChoices("Просмотр зон", "Выход"));
+                    .Title("[bold]Выберите действие[/]")
+                    .PageSize(10)
+                    .AddChoices(new[]
+                    {
+                        "Просмотр конфигурации",
+                        "Просмотр серверов",
+                        "Просмотр статистики",
+                        "Просмотр зон",
+                        "[red]Выход[/]"
+                    }));
 
-            if (choice == "Выход") break;
-
-            if (choice == "Просмотр зон")
+            switch (selected)
             {
-                ShowZones(server);
+                case "Просмотр конфигурации":
+                    ConfigView.Render();
+                    break;
+
+                case "Просмотр серверов":
+                    ServerView.Render(servers);
+                    break;
+
+                case "Просмотр статистики":
+                    StatisticsView.Render(servers);
+                    break;
+
+                case "Просмотр зон":
+                    ZoneView.Render(servers);
+                    break;
+
+                case "[red]Выход[/]":
+                    return;
             }
+
+            AnsiConsole.MarkupLine("\n[grey]Нажмите любую клавишу для возврата в меню...[/]");
+            Console.ReadKey(true);
         }
-    }
-
-    private static void ShowZones(ServerInfo server)
-    {
-        var client = new PowerDnsClient(ConfigHelper.GetApiKey());
-        var zones = client.GetZonesAsync(server.Id).GetAwaiter().GetResult();
-
-        var table = new Table()
-            .Title($"[blue]Зоны на сервере: {server.Id}[/]")
-            .AddColumn("ID")
-            .AddColumn("Имя")
-            .AddColumn("Тип")
-            .AddColumn("DNSSEC")
-            .AddColumn("Serial");
-
-        foreach (var zone in zones)
-        {
-            table.AddRow(
-                zone.Id,
-                zone.Name,
-                zone.Type,
-                zone.Dnssec ? "[green]✓[/]" : "[red]✗[/]",
-                zone.Serial.ToString());
-        }
-
-        AnsiConsole.Write(table);
     }
 }
