@@ -1,12 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
 
-namespace PowerDNSManagerCLI.Models
+namespace PowerDNSManagerCLI.Models;
+
+public class Statistic
 {
-    internal class Statistic
-    {
-    }
+    [JsonPropertyName("name")]
+    public string Name { get; set; } = default!;
+
+    [JsonPropertyName("value")]
+    public JsonElement Value { get; set; } // тип может быть int, double, string — используем JsonElement
 }

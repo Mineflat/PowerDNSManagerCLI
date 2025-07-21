@@ -1,12 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text.Json.Serialization;
 
-namespace PowerDNSManagerCLI.Models
+namespace PowerDNSManagerCLI.Models;
+
+public class ConfigEntry
 {
-    internal class ConfigEntry
-    {
-    }
+    [JsonPropertyName("name")]
+    public string Name { get; set; } = default!;
+
+    [JsonPropertyName("value")]
+    public string? Value { get; set; }
+
+    [JsonPropertyName("default")]
+    public string? Default { get; set; }
+
+    [JsonPropertyName("description")]
+    public string? Description { get; set; }
 }
