@@ -15,4 +15,5 @@ public class ConfigEntry
 
     [JsonPropertyName("description")]
     public string? Description { get; set; }
+    public string Key { get; internal set; } = "";
 }

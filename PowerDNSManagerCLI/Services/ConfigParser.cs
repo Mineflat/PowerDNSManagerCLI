@@ -1,17 +1,51 @@
-﻿namespace PowerDNSManagerCLI;
+﻿using PowerDNSManagerCLI.Models;
 
-public static class ConfigHelper
+namespace PowerDNSManagerCLI.Services;
+
+public static class ConfigParser
 {
-    public static string? GetApiKey(string path = "/etc/pdns/pdns.conf")
-    {
-        if (!File.Exists(path)) return null;
+    private const string ConfigPath = "/etc/powerdns/pdns.conf";
 
-        foreach (var line in File.ReadAllLines(path))
+    public static string? GetApiKey()
+    {
+        if (!File.Exists(ConfigPath))
+            return null;
+
+        foreach (var line in File.ReadLines(ConfigPath))
         {
-            if (line.StartsWith("api-key="))
-                return line["api-key=".Length..].Trim();
+            if (line.StartsWith('#') || !line.Contains("="))
+                continue;
+
+            var parts = line.Split('=', 2, StringSplitOptions.TrimEntries);
+            if (parts.Length != 2)
+                continue;
+
+            if (parts[0] == "api-key")
+                return parts[1];
         }
 
         return null;
+    }
+
+    public static IEnumerable<ConfigEntry> GetAllConfig()
+    {
+        if (!File.Exists(ConfigPath))
+            yield break;
+
+        foreach (var line in File.ReadLines(ConfigPath))
+        {
+            if (line.StartsWith('#') || !line.Contains("="))
+                continue;
+
+            var parts = line.Split('=', 2, StringSplitOptions.TrimEntries);
+            if (parts.Length != 2)
+                continue;
+
+            yield return new ConfigEntry
+            {
+                Key = parts[0],
+                Value = parts[1]
+            };
+        }
     }
 }
