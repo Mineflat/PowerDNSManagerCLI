@@ -29,11 +29,11 @@ public static class MenuRenderer
                     break;
 
                 case "⚙️ Конфигурация":
-                    ConfigView.Render(servers);
+                    ConfigView.Render(); // БЕЗ параметров
                     break;
 
                 case "🌐 Зоны":
-                    ZoneView.Render(servers);
+                    ZoneView.Render(); // тоже БЕЗ параметров
                     break;
 
                 case "💻 Информация о серверах":
