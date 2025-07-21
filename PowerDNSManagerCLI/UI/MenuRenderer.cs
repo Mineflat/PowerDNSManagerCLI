@@ -1,6 +1,5 @@
-﻿using Spectre.Console;
-using PowerDNSManagerCLI.Models;
-using PowerDNSManagerCLI.UI;
+﻿using PowerDNSManagerCLI.Models;
+using Spectre.Console;
 
 namespace PowerDNSManagerCLI.UI;
 
@@ -10,43 +9,43 @@ public static class MenuRenderer
     {
         while (true)
         {
-            var selected = AnsiConsole.Prompt(
+            var option = AnsiConsole.Prompt(
                 new SelectionPrompt<string>()
                     .Title("[bold]Выберите действие[/]")
                     .PageSize(10)
                     .AddChoices(new[]
                     {
-                        "Просмотр конфигурации",
-                        "Просмотр серверов",
-                        "Просмотр статистики",
-                        "Просмотр зон",
-                        "[red]Выход[/]"
+                        "📊 Статистика",
+                        "⚙️ Конфигурация",
+                        "🌐 Зоны",
+                        "💻 Информация о серверах",
+                        "🚪 Выход"
                     }));
 
-            switch (selected)
+            switch (option)
             {
-                case "Просмотр конфигурации":
-                    ConfigView.Render();
-                    break;
-
-                case "Просмотр серверов":
-                    ServerView.Render(servers);
-                    break;
-
-                case "Просмотр статистики":
+                case "📊 Статистика":
                     StatisticsView.Render(servers);
                     break;
 
-                case "Просмотр зон":
+                case "⚙️ Конфигурация":
+                    ConfigView.Render(servers);
+                    break;
+
+                case "🌐 Зоны":
                     ZoneView.Render(servers);
                     break;
 
-                case "[red]Выход[/]":
+                case "💻 Информация о серверах":
+                    ServerView.Render(servers);
+                    break;
+
+                case "🚪 Выход":
                     return;
             }
 
-            AnsiConsole.MarkupLine("\n[grey]Нажмите любую клавишу для возврата в меню...[/]");
-            Console.ReadKey(true);
+            AnsiConsole.MarkupLine("\n[grey]Нажмите [bold]Enter[/] для возврата в меню...[/]");
+            Console.ReadLine();
         }
     }
 }
